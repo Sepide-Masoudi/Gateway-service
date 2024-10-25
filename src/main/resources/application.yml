@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: countries-service
+          uri: lb://countries-service #http://localhost:8083
+          predicates:
+            - Path=/countries-service/**
+          filters:
+            - RewritePath=/countries-service/(?<segment>.*), /${segment}
+        - id: cities-service
+          uri: lb://cities-service #http://localhost:8084
+          predicates:
+              - Path=/cities-service/**
+          filters:
+              - RewritePath=/cities-service/(?<segment>.*), /${segment}
+    discovery:
+      locator:
+        enabled: true
+        lower-case-service-id: true
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
